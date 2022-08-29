@@ -19,7 +19,9 @@ class Board
     @relative_moves.each do |move_direction|
       x = (move_direction[0] + knight_position[0])
       y = (move_direction[1] + knight_position[1])
-      absolute_moves << ([x, y]) if @board.include?([x, y])
+      if @board.include?([x, y])
+        absolute_moves << @board.delete([x, y])
+      end
     end
     puts absolute_moves
   end
