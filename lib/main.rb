@@ -1,8 +1,8 @@
-require_relative 'vertex.rb'
+require_relative 'vertex'
 
 # Board class
 class Board
-  attr_accessor :board, :unraveling_vertex
+  attr_accessor :board, :unraveling_vertex, :graph_dict
 
   def initialize(width = 8, height = 8)
     @board = []
@@ -14,16 +14,25 @@ class Board
 
     @knight = [0, 0]
     @relative_moves = [[1, 2], [2, 1], [2, -1], [1, -2], [-1, -2], [-2, -1], [-2, 1], [-1, 2]]
+    @graph_dict = {}
     @unraveling_vertex = build_graph
+  end
+
+  def add_vertex(vertex)
+    @graph_dict[vertex.value] = vertex
   end
 
   def build_graph(knight = @knight)
     return Vertex.new(@board[0]) if @board.length == 1
 
-    knight_square_vertex = Vertex.new(@board.delete(knight)) if @board.include?(knight)
+    if @board.include?(knight)
+      knight_square_vertex = Vertex.new(@board.delete(knight)) 
+      add_vertex(knight_square_vertex)
+    end
     absolute_moves = absolute_moves(knight)
     absolute_moves.each do |square|
       square_vertex = Vertex.new(square)
+      add_vertex(square_vertex)
       square_vertex.add_edge(knight)
       knight_square_vertex&.add_edge(square_vertex)
     end
