@@ -16,7 +16,7 @@ class Board
     @knight = [0, 0]
     @relative_moves = [[1, 2], [2, 1], [2, -1], [1, -2], [-1, -2], [-2, -1], [-2, 1], [-1, 2]]
     @graph_dict = {}
-    @unraveling_vertex = build_graph
+    build_graph
   end
 
   def add_vertex(vertex)
@@ -64,12 +64,13 @@ class Board
     while bfs_queue
       current_coordinate, path = bfs_queue.shift
       visited << current_coordinate
-      for neighboring_square in @graph_dict[current_coordinate]
-        unless visited.include?(neighboring_square)
-          if neighboring_square == end_coordinate
-            return path + [neighboring_square]
+      adjacency_list = @graph_dict[current_coordinate].edges
+      adjacency_list.each do |neighboring_square|
+        unless visited.include?(neighboring_square.value)
+          if neighboring_square.value == end_coordinate
+            return path + [neighboring_square.value]
           else
-            bfs_queue.append([neighboring_square, path + [neighboring_square]])
+            bfs_queue.append([neighboring_square.value, path + [neighboring_square.value]])
           end
         end
       end
@@ -78,9 +79,4 @@ class Board
 end
 
 my_board = Board.new
-# my_board.graph_dict[[4, 4]].edges.each { |edge| puts edge.to_s}
-# puts (my_board.graph_dict[[4, 4]].edges.each { |edge| puts edge.value.to_s })
-# puts my_board.graph_dict[[4, 4]].edges.to_s
-vertex = my_board.graph_dict[[3, 2]]
-lst_edges = vertex.edges
-lst_edges.each { |vertex| puts vertex.value.to_s }
+puts my_board.bfs([3, 3], [4, 3]).to_s
