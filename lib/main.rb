@@ -23,23 +23,23 @@ class Board
     @graph_dict[vertex.value] = vertex
   end
 
+  def create_or_call(coordinates)
+    if @graph_dict.include?(coordinates)
+      vertex = @graph_dict[coordinates]
+    else
+      vertex = Vertex.new(coordinates)
+      add_vertex(vertex)
+    end
+    vertex
+  end
+
   def build_graph(knight = @knight)
     return Vertex.new(@board[0]) if @board.length == 1
 
-    if @graph_dict.include?(knight)
-      knight_square_vertex = @graph_dict[knight]
-    else
-      knight_square_vertex = Vertex.new(knight) 
-      add_vertex(knight_square_vertex)
-    end
+    knight_square_vertex = create_or_call(knight)
     absolute_moves = absolute_moves(knight)
     absolute_moves.each do |square|
-      if @graph_dict.include?(square)
-        square_vertex = @graph_dict[square]
-      else
-        square_vertex = Vertex.new(square)
-        add_vertex(square_vertex)
-      end
+      square_vertex = create_or_call(square)
       square_vertex.add_edge(knight_square_vertex)
       knight_square_vertex.add_edge(square_vertex)
     end
@@ -66,13 +66,10 @@ class Board
       visited << current_coordinate
       adjacency_list = @graph_dict[current_coordinate].edges
       adjacency_list.each do |neighboring_square|
-        unless visited.include?(neighboring_square.value)
-          if neighboring_square.value == end_coordinate
-            return path + [neighboring_square.value]
-          else
-            bfs_queue.append([neighboring_square.value, path + [neighboring_square.value]])
-          end
-        end
+        next if visited.include?(neighboring_square.value)
+        return path + [neighboring_square.value] if neighboring_square.value == end_coordinate
+
+        bfs_queue.append([neighboring_square.value, path + [neighboring_square.value]])
       end
     end
   end
