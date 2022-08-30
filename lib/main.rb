@@ -76,7 +76,13 @@ class Board
       end
     end
   end
+
+  def shortest_path_between(start, finish)
+    path = bfs(start, finish)
+    puts "You made it in #{path.length - 1} moves! Here's your path: "
+    path.each { |coordinate| puts coordinate.to_s }
+  end
 end
 
 my_board = Board.new
-puts my_board.bfs([3, 3], [4, 3]).to_s
+my_board.shortest_path_between([3, 3], [4, 3])
